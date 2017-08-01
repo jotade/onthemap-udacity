@@ -18,16 +18,32 @@ class LoginViewController: UIViewController {
     @IBAction func loginAction(_ sender: UIButton) {
         
         activityIndicator = AlertUtils.showActivityIndicatory(uiView: self.view)
-        AuthService.login(email: emailTextField.text!, password: passwordTextField.text!) { success in
+
+        guard let email = emailTextField.text, emailTextField.text != "", let password = passwordTextField.text, passwordTextField.text != "" else {
+            
+            AlertUtils.showAlert(with: "Error", message: "Please enter an email and a password to continue!", viewController: self)
+            return
+        }
+        
+        
+        AuthService.login(email: email, password: password) { success in
             
             if success{
-
+                
                 DispatchQueue.main.async {
                     
                     self.activityIndicator.removeFromSuperview()
                     self.performSegue(withIdentifier: "login", sender: nil)
                 }
+                
+            } else {
+                
+                DispatchQueue.main.async {
+                    self.activityIndicator.removeFromSuperview()
+                    AlertUtils.showAlert(with: "Error", message: "couldn't log in!", viewController: self)
+                }
             }
         }
+        
     }
 }
