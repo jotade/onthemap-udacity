@@ -26,12 +26,16 @@
                                 <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                                 <items>
                                     <navigationItem title="On The  Map" id="aPX-Uq-Kw2">
-                                        <barButtonItem key="leftBarButtonItem" image="icon_addpin" id="s9U-zs-VvE">
+                                        <barButtonItem key="leftBarButtonItem" title="Logout" id="s9U-zs-VvE">
                                             <connections>
-                                                <action selector="addUpdate:" destination="4xJ-Kk-Cew" id="KDp-Tn-GoN"/>
+                                                <action selector="logout:" destination="4xJ-Kk-Cew" id="Qkr-re-pRi"/>
                                             </connections>
                                         </barButtonItem>
-                                        <barButtonItem key="rightBarButtonItem" image="icon_refresh" id="IQe-Gg-ZBf"/>
+                                        <barButtonItem key="rightBarButtonItem" image="icon_addpin" id="IQe-Gg-ZBf">
+                                            <connections>
+                                                <action selector="addUpdate:" destination="4xJ-Kk-Cew" id="MzP-Yi-jxh"/>
+                                            </connections>
+                                        </barButtonItem>
                                     </navigationItem>
                                 </items>
                             </navigationBar>
@@ -92,7 +96,7 @@
                     </view>
                     <tabBarItem key="tabBarItem" title="List" image="icon_listview-deselected" selectedImage="icon_listview-selected" id="Oh4-n5-WPk"/>
                     <connections>
-                        <outlet property="addUpdateLocationBarButton" destination="s9U-zs-VvE" id="drW-ky-UfS"/>
+                        <outlet property="addUpdateLocationBarButton" destination="IQe-Gg-ZBf" id="qdH-f5-Z6d"/>
                         <outlet property="tableView" destination="CiW-rV-3tF" id="hbX-Cc-Q86"/>
                         <segue destination="BRI-km-Vxb" kind="presentation" identifier="find" id="kUZ-VA-OYQ"/>
                     </connections>
@@ -197,14 +201,14 @@
                                 <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                                 <items>
                                     <navigationItem title="On The Map" id="l31-4I-DUV">
-                                        <barButtonItem key="leftBarButtonItem" image="icon_addpin" id="ACY-is-7ry">
+                                        <barButtonItem key="leftBarButtonItem" title="Logout" id="ACY-is-7ry">
                                             <connections>
-                                                <action selector="addLocationAction:" destination="hSP-Qh-7OQ" id="755-rM-sCL"/>
+                                                <action selector="logOut:" destination="hSP-Qh-7OQ" id="3jf-uB-aWW"/>
                                             </connections>
                                         </barButtonItem>
-                                        <barButtonItem key="rightBarButtonItem" image="icon_refresh" id="B8g-2h-zYj">
+                                        <barButtonItem key="rightBarButtonItem" image="icon_addpin" id="B8g-2h-zYj">
                                             <connections>
-                                                <action selector="refreshAction:" destination="hSP-Qh-7OQ" id="o9Z-Bu-bUS"/>
+                                                <action selector="addLocationAction:" destination="hSP-Qh-7OQ" id="3rq-AS-dbG"/>
                                             </connections>
                                         </barButtonItem>
                                     </navigationItem>
@@ -272,7 +276,7 @@
                     </view>
                     <tabBarItem key="tabBarItem" title="Map" image="icon_mapview-deselected" selectedImage="icon_mapview-selected" id="w6A-Ro-FWN"/>
                     <connections>
-                        <outlet property="addUpdateButton" destination="ACY-is-7ry" id="gfo-Sy-6pM"/>
+                        <outlet property="addUpdateButton" destination="B8g-2h-zYj" id="Gsn-SW-FEP"/>
                         <outlet property="linkTextField" destination="VmV-pN-5jF" id="pyk-az-vxj"/>
                         <outlet property="linkView" destination="hMd-yi-6Ph" id="OH8-Xd-bTl"/>
                         <outlet property="mapView" destination="TJ4-f0-occ" id="zY6-V5-MGB"/>
@@ -393,11 +397,10 @@
         <image name="icon_listview-selected" width="75" height="50"/>
         <image name="icon_mapview-deselected" width="75" height="50"/>
         <image name="icon_mapview-selected" width="75" height="50"/>
-        <image name="icon_refresh" width="24" height="24"/>
         <image name="icon_world" width="52" height="67"/>
         <image name="logo-u" width="62" height="62"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="UmP-1q-uuc"/>
+        <segue reference="kUZ-VA-OYQ"/>
     </inferredMetricsTieBreakers>
 </document>

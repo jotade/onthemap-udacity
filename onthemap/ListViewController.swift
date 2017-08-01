@@ -22,6 +22,13 @@ class ListViewController: UIViewController {
         tableView.reloadData()
     }
     
+    @IBAction func logout(_ sender: UIBarButtonItem) {
+        
+        AuthService.logout(){ success,dataString in
+            print("LOGOUT: \(dataString)")
+        }
+    }
+    
     @IBAction func addUpdate(_ sender: UIBarButtonItem) {
         
         if let uniqueKey = AuthService.instance.currentStudent?.uniqueKey {

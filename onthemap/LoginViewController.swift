@@ -21,13 +21,14 @@ class LoginViewController: UIViewController {
 
         guard let email = emailTextField.text, emailTextField.text != "", let password = passwordTextField.text, passwordTextField.text != "" else {
             
-            AlertUtils.showAlert(with: "Error", message: "Please enter an email and a password to continue!", viewController: self)
+            AlertUtils.showAlert(with: "Error", message: "Please enter an email and a password to continue!", viewController: self, isDefault: true, actions: nil)
+            self.activityIndicator.removeFromSuperview()
             return
         }
         
         
         AuthService.login(email: email, password: password) { success in
-            
+
             if success{
                 
                 DispatchQueue.main.async {
@@ -36,11 +37,11 @@ class LoginViewController: UIViewController {
                     self.performSegue(withIdentifier: "login", sender: nil)
                 }
                 
-            } else {
+            }else{
                 
                 DispatchQueue.main.async {
                     self.activityIndicator.removeFromSuperview()
-                    AlertUtils.showAlert(with: "Error", message: "couldn't log in!", viewController: self)
+                    AlertUtils.showAlert(with: "Error", message: "couldn't log in!", viewController: self, isDefault: true, actions: nil)
                 }
             }
         }

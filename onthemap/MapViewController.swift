@@ -111,21 +111,20 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             
             let keys = DataService.instance.students.map{ $0.uniqueKey }
             if keys.contains(where: { $0 == uniqueKey }){
-                
-                let alertController = UIAlertController(title: "", message: "You have already posted a Student Location. Would you like to overwrite your current location?", preferredStyle: .alert)
-                
+
                 let overwriteAction = UIAlertAction(title: "Overwrite", style: .default) { action in
                     DataService.instance.isUpdate = true
                     self.performSegue(withIdentifier: "find", sender: self)
                 }
                 
                 let cancelAction = UIAlertAction(title: "Cancel", style: .default) { action in
+                    
                     self.dismiss(animated: true, completion: nil)
                 }
                 
-                alertController.addAction(overwriteAction)
-                alertController.addAction(cancelAction)
-                self.present(alertController, animated: true, completion: nil)
+                let actions = [overwriteAction, cancelAction]
+                
+                AlertUtils.showAlert(with: "", message: "You have already posted a Student Location. Would you like to overwrite your current location?", viewController: self, isDefault: false, actions: actions)
                 
                 return
             }
@@ -133,7 +132,14 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         }
     }
     
-    @IBAction func refreshAction(_ sender: UIBarButtonItem) {
+    @IBAction func logOut(_ sender: UIBarButtonItem) {
+        
+        AuthService.logout(){ success,dataString in
+            print("LOGOUT: \(dataString)")
+        }
+    }
+    
+    func refreshAction(_ sender: UIBarButtonItem) {
         mapView.removeAnnotations(annotations)
         self.annotations = []
         retrieveStudentsInfo()
@@ -143,7 +149,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         
         guard let link = linkTextField.text , linkTextField.text != "" else{
             
-            AlertUtils.showAlert(with: "Oops", message: "You forgot to put your Link URL", viewController: self)
+            AlertUtils.showAlert(with: "Oops", message: "You forgot to put your Link URL", viewController: self, isDefault: true, actions: nil)
             return
         }
         
@@ -172,7 +178,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
                 
             }else{
                 
-                AlertUtils.showAlert(with: "Error", message: "Couldn't retreive students info", viewController: self)
+                AlertUtils.showAlert(with: "Error", message: "Couldn't retreive students info", viewController: self, isDefault: true, actions: nil)
             }
         }
     }

@@ -38,11 +38,20 @@ struct AlertUtils{
         return container
     }
     
-    static func showAlert(with title: String?, message: String?,viewController: UIViewController) {
+    static func showAlert(with title: String?, message: String?,viewController: UIViewController,isDefault: Bool, actions: [UIAlertAction]?) {
         
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
-        alertController.addAction(okAction)
+        if isDefault{
+            let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+            alertController.addAction(okAction)
+        }
+
+        if let actions = actions{
+            for action in actions{
+                alertController.addAction(action)
+            }
+        }
+        
         viewController.present(alertController, animated: true, completion: nil)
     }
 }
