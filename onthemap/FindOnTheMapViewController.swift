@@ -24,7 +24,7 @@ class FindOnTheMapViewController: UIViewController {
             if error != nil{
                 
                 print(error!.localizedDescription)
-                AlertUtils.showAlert(with: "Error", message: "couldn't find your location!", viewController: self, isDefault: true, actions: nil)
+                Utils.showAlert(with: "Error", message: "couldn't find your location!", viewController: self, isDefault: true, actions: nil)
                 return
             }
             
@@ -48,12 +48,12 @@ class FindOnTheMapViewController: UIViewController {
         
         guard let location = locationTextField.text , locationTextField.text != "" else {
             
-            AlertUtils.showAlert(with: "Oops", message: "You forgot to put your location!", viewController: self, isDefault: true, actions: nil)
+            Utils.showAlert(with: "Oops", message: "You forgot to put your location!", viewController: self, isDefault: true, actions: nil)
             
             return
         }
         
-        activityIndicator = AlertUtils.showActivityIndicatory(uiView: self.view)
+        activityIndicator = Utils.showActivityIndicatory(uiView: self.view)
         geocodeLocation(city: location)
     }
     

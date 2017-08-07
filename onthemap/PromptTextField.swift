@@ -23,4 +23,10 @@ class PromptTextField: UITextField, UITextFieldDelegate {
             textField.text = ""
         }
     }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        
+        self.resignFirstResponder()
+        return true
+    }
 }

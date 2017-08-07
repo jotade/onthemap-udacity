@@ -9,7 +9,7 @@
 import UIKit
 import MapKit
 
-class MapViewController: UIViewController, MKMapViewDelegate {
+class MapViewController: UIViewController {
     
     @IBOutlet weak var addUpdateButton: UIBarButtonItem!
     @IBOutlet weak var submitButton: UIButton!
@@ -35,6 +35,10 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(showLocationFromPrompt), name: NSNotification.Name(rawValue: "showLocation"), object: nil)
     }
     
+    func unsubscribeFromKeyboardNotifications() {
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: "showLocation"), object: nil)
+    }
+    
     func showLocationFromPrompt(){
 
         self.tabBarController?.selectedIndex = 0
@@ -43,15 +47,14 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         submitButton.isHidden = false
         
         let currentStudentPin = createStudentPin(student: AuthService.instance.currentStudent)
-        self.mapView.addAnnotation(currentStudentPin)
+        mapView.addAnnotation(currentStudentPin)
+        annotations.append(currentStudentPin)
         let span = MKCoordinateSpanMake(0.05, 0.05)
         let region = MKCoordinateRegion(center: currentStudentPin.coordinate , span: span)
         mapView.setRegion(region, animated: true)
     }
     
-    func unsubscribeFromKeyboardNotifications() {
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: "showLocation"), object: nil)
-    }
+    
     
     func createStudentPin(student: Student? ) -> MKPointAnnotation{
         
@@ -85,6 +88,21 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         }
     }
     
+    func retrieveStudentsInfo(){
+        
+        DataService.retrieveStudents { (success) in
+            
+            if success{
+                
+                self.loadAnnotations()
+                
+            }else{
+                
+                Utils.showAlert(with: "Error", message: "Couldn't retreive students info", viewController: self, isDefault: true, actions: nil)
+            }
+        }
+    }
+    
     func openURL(_ sender: UITapGestureRecognizer) {
         
         if let view = sender.view as? MKAnnotationView, let annotation = view.annotation, let stringUrl = annotation.subtitle, let url = URL(string: stringUrl!){
@@ -94,16 +112,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         
     }
     
-    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.openURL(_:)))
-        
-        view.addGestureRecognizer(tapGesture)
-    }
-    
-    func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
-        view.removeGestureRecognizer(view.gestureRecognizers!.first!)
-    }
+    //MARK: Button Actions
     
     @IBAction func addLocationAction(_ sender: UIBarButtonItem) {
         
@@ -124,7 +133,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
                 
                 let actions = [overwriteAction, cancelAction]
                 
-                AlertUtils.showAlert(with: "", message: "You have already posted a Student Location. Would you like to overwrite your current location?", viewController: self, isDefault: false, actions: actions)
+                Utils.showAlert(with: "", message: "You have already posted a Student Location. Would you like to overwrite your current location?", viewController: self, isDefault: false, actions: actions)
                 
                 return
             }
@@ -135,21 +144,17 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     @IBAction func logOut(_ sender: UIBarButtonItem) {
         
         AuthService.logout(){ success,dataString in
+            
             print("LOGOUT: \(dataString)")
+            self.parent?.navigationController?.popViewController(animated: true)
         }
-    }
-    
-    func refreshAction(_ sender: UIBarButtonItem) {
-        mapView.removeAnnotations(annotations)
-        self.annotations = []
-        retrieveStudentsInfo()
     }
     
     @IBAction func submit(_ sender: UIButton) {
         
-        guard let link = linkTextField.text , linkTextField.text != "" else{
-            
-            AlertUtils.showAlert(with: "Oops", message: "You forgot to put your Link URL", viewController: self, isDefault: true, actions: nil)
+        guard let link = linkTextField.text , linkTextField.text != "", Utils.validateUrl(urlString: link as NSString) else{
+
+            Utils.showAlert(with: "Oops", message: "Not a valid URL", viewController: self, isDefault: true, actions: nil)
             return
         }
         
@@ -168,23 +173,22 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         }
     }
     
-    func retrieveStudentsInfo(){
-        
-        DataService.retrieveStudents { (success) in
-            
-            if success{
-                
-                self.loadAnnotations()
-                
-            }else{
-                
-                AlertUtils.showAlert(with: "Error", message: "Couldn't retreive students info", viewController: self, isDefault: true, actions: nil)
-            }
-        }
-    }
-    
     deinit {
         
         unsubscribeFromKeyboardNotifications()
+    }
+}
+
+extension MapViewController: MKMapViewDelegate {
+    
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.openURL(_:)))
+        
+        view.addGestureRecognizer(tapGesture)
+    }
+    
+    func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
+        view.removeGestureRecognizer(view.gestureRecognizers!.first!)
     }
 }

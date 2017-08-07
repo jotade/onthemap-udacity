@@ -17,33 +17,40 @@ class LoginViewController: UIViewController {
     
     @IBAction func loginAction(_ sender: UIButton) {
         
-        activityIndicator = AlertUtils.showActivityIndicatory(uiView: self.view)
-
+        activityIndicator = Utils.showActivityIndicatory(uiView: self.view)
+        
         guard let email = emailTextField.text, emailTextField.text != "", let password = passwordTextField.text, passwordTextField.text != "" else {
             
-            AlertUtils.showAlert(with: "Error", message: "Please enter an email and a password to continue!", viewController: self, isDefault: true, actions: nil)
+            Utils.showAlert(with: "Error", message: "Please enter an email and a password to continue!", viewController: self, isDefault: true, actions: nil)
             self.activityIndicator.removeFromSuperview()
             return
         }
         
-        
-        AuthService.login(email: email, password: password) { success in
-
-            if success{
+        if Utils.isValidEmail(testStr: email){
+            
+            AuthService.login(email: email, password: password) { success in
                 
-                DispatchQueue.main.async {
+                if success{
                     
-                    self.activityIndicator.removeFromSuperview()
-                    self.performSegue(withIdentifier: "login", sender: nil)
-                }
-                
-            }else{
-                
-                DispatchQueue.main.async {
-                    self.activityIndicator.removeFromSuperview()
-                    AlertUtils.showAlert(with: "Error", message: "couldn't log in!", viewController: self, isDefault: true, actions: nil)
+                    DispatchQueue.main.async {
+                        
+                        self.activityIndicator.removeFromSuperview()
+                        self.performSegue(withIdentifier: "login", sender: nil)
+                    }
+                    
+                }else{
+                    
+                    DispatchQueue.main.async {
+                        self.activityIndicator.removeFromSuperview()
+                        Utils.showAlert(with: "Error", message: "couldn't log in!", viewController: self, isDefault: true, actions: nil)
+                    }
                 }
             }
+            
+        }else{
+            
+            Utils.showAlert(with: "Error", message: "Please enter a valid email", viewController: self, isDefault: true, actions: nil)
+            self.activityIndicator.removeFromSuperview()
         }
         
     }

@@ -25,7 +25,9 @@ class ListViewController: UIViewController {
     @IBAction func logout(_ sender: UIBarButtonItem) {
         
         AuthService.logout(){ success,dataString in
+            
             print("LOGOUT: \(dataString)")
+            self.parent?.navigationController?.popViewController(animated: true)
         }
     }
     
@@ -36,20 +38,19 @@ class ListViewController: UIViewController {
             let keys = DataService.instance.students.map{ $0.uniqueKey }
             if keys.contains(where: { $0 == uniqueKey }){
                 
-                let alertController = UIAlertController(title: "", message: "You have already posted a Student Location. Would you like to overwrite your current location?", preferredStyle: .alert)
-                
                 let overwriteAction = UIAlertAction(title: "Overwrite", style: .default) { action in
                     DataService.instance.isUpdate = true
                     self.performSegue(withIdentifier: "find", sender: self)
                 }
                 
                 let cancelAction = UIAlertAction(title: "Cancel", style: .default) { action in
+                    
                     self.dismiss(animated: true, completion: nil)
                 }
                 
-                alertController.addAction(overwriteAction)
-                alertController.addAction(cancelAction)
-                self.present(alertController, animated: true, completion: nil)
+                let actions = [overwriteAction, cancelAction]
+                
+                Utils.showAlert(with: "", message: "You have already posted a Student Location. Would you like to overwrite your current location?", viewController: self, isDefault: false, actions: actions)
                 
                 return
             }

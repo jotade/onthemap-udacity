@@ -1,5 +1,5 @@
 //
-//  AlertUtils.swift
+//  Utils.swift
 //  onthemap
 //
 //  Created by IM Development on 7/27/17.
@@ -9,7 +9,7 @@
 import UIKit
 
 
-struct AlertUtils{
+struct Utils{
     
     static func showActivityIndicatory(uiView: UIView) -> UIView {
         
@@ -53,5 +53,18 @@ struct AlertUtils{
         }
         
         viewController.present(alertController, animated: true, completion: nil)
+    }
+    
+    static  func isValidEmail(testStr:String) -> Bool {
+        // print("validate calendar: \(testStr)")
+        let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+        
+        let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
+        return emailTest.evaluate(with: testStr)
+    }
+    
+    static func validateUrl (urlString: NSString) -> Bool {
+        let urlRegEx = "((?:http|https)://)?(?:www\\.)?[\\w\\d\\-_]+\\.\\w{2,3}(\\.\\w{2})?(/(?<=/)(?:[\\w\\d\\-./_]+)?)?"
+        return NSPredicate(format: "SELF MATCHES %@", urlRegEx).evaluate(with: urlString)
     }
 }
