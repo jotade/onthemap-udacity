@@ -13,12 +13,9 @@ class ListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var addUpdateLocationBarButton: UIBarButtonItem!
     
-    var students = [Student]()
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        students = DataService.instance.students.sorted(by: {$0.updatedAt! > $1.updatedAt!})
+
         tableView.reloadData()
     }
     
@@ -62,14 +59,14 @@ class ListViewController: UIViewController {
 extension ListViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return students.count
+        return DataService.instance.students.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ListTableViewCell
         
-        cell.configureCell(student: students[indexPath.row])
+        cell.configureCell(student: DataService.instance.students.sorted(by: {$0.updatedAt! > $1.updatedAt!})[indexPath.row])
         
         return cell
     }
@@ -79,7 +76,7 @@ extension ListViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        if let stringURL = students[indexPath.row].mediaURL, let url = URL(string:stringURL) {
+        if let stringURL = DataService.instance.students.sorted(by: {$0.updatedAt! > $1.updatedAt!})[indexPath.row].mediaURL, let url = URL(string:stringURL) {
             
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }

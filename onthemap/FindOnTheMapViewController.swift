@@ -24,6 +24,8 @@ class FindOnTheMapViewController: UIViewController {
             if error != nil{
                 
                 print(error!.localizedDescription)
+                
+                self.activityIndicator?.removeFromSuperview()
                 Utils.showAlert(with: "Error", message: "couldn't find your location!", viewController: self, isDefault: true, actions: nil)
                 return
             }

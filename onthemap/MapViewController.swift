@@ -41,7 +41,7 @@ class MapViewController: UIViewController {
     
     func showLocationFromPrompt(){
 
-        self.tabBarController?.selectedIndex = 0
+        tabBarController?.selectedIndex = 0
         addUpdateButton.isEnabled = false
         linkView.isHidden = false
         submitButton.isHidden = false
@@ -161,14 +161,24 @@ class MapViewController: UIViewController {
         AuthService.instance.currentStudent?.mediaURL = link
         DataService.postStudentLocation(student: AuthService.instance.currentStudent, isUpdate: DataService.instance.isUpdate){ success in
             
-            DispatchQueue.main.async {
-                
-                self.addUpdateButton.isEnabled = true
-                self.mapView.removeAnnotations(self.annotations)
-                self.annotations = []
-                self.retrieveStudentsInfo()
-                self.linkView.isHidden = true
-                self.submitButton.isHidden = true
+            if success{
+                DispatchQueue.main.async {
+                    
+                    self.addUpdateButton.isEnabled = true
+                    self.mapView.removeAnnotations(self.annotations)
+                    self.annotations = []
+                    self.retrieveStudentsInfo()
+                    self.linkView.isHidden = true
+                    self.submitButton.isHidden = true
+                }
+            } else {
+                DispatchQueue.main.async {
+                    
+                    self.addUpdateButton.isEnabled = true
+                    self.linkView.isHidden = true
+                    self.submitButton.isHidden = true
+                    Utils.showAlert(with: "Oops", message: "Something went wrong, try again later!", viewController: self, isDefault: true, actions: nil)
+                }
             }
         }
     }
