@@ -18,7 +18,7 @@ class AuthService {
     
     private init(){}
     
-    static func login(email:String, password: String, completion: @escaping(_ success:Bool)->()){
+    static func login(email:String, password: String, completion: @escaping(_ success:Bool, _ error: String?)->()){
         
         let request = NSMutableURLRequest(url: URL(string: "https://www.udacity.com/api/session")!)
         request.httpMethod = "POST"
@@ -29,20 +29,22 @@ class AuthService {
         let session = URLSession.shared
         let task = session.dataTask(with: request as URLRequest) { data, response, error in
             if error != nil { // Handle error…
-                completion(false)
+                completion(false, error?.localizedDescription)
                 return
             }
             let range = Range(5..<data!.count)
             let newData = data?.subdata(in: range) /* subset response data! */
-            
+            print(NSString(data: newData!, encoding: String.Encoding.utf8.rawValue)!)
             let user = try? JSONSerialization.jsonObject(with: newData!, options: []) as! [String:AnyObject]
             if let session = user?["session"] as? [String: AnyObject], let id = session["id"] as? String, let account = user?["account"] as? [String: AnyObject], let key = account["key"] as? String{
                 
                 AuthService.instance.sessionTokenID = id
                 AuthService.instance.accountKey = key
-                completion(true)
-            }else{
-                completion(false)
+                completion(true, nil)
+            }
+            
+            if let error = user?["error"] as? String{
+                completion(false, error)
             }
         }
         task.resume()

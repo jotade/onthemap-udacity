@@ -24,7 +24,9 @@ class ListViewController: UIViewController {
         AuthService.logout(){ success,dataString in
             
             print("LOGOUT: \(dataString)")
-            self.parent?.navigationController?.popViewController(animated: true)
+            DispatchQueue.main.async {
+                self.dismiss(animated: true, completion: nil)
+            }
         }
     }
     
@@ -32,7 +34,7 @@ class ListViewController: UIViewController {
         
         if let uniqueKey = AuthService.instance.currentStudent?.uniqueKey {
             
-            let keys = DataService.instance.students.map{ $0.uniqueKey }
+            let keys = StudentDataSource.sharedInstance.studentData.map{ $0.uniqueKey }
             if keys.contains(where: { $0 == uniqueKey }){
                 
                 let overwriteAction = UIAlertAction(title: "Overwrite", style: .default) { action in
@@ -59,14 +61,14 @@ class ListViewController: UIViewController {
 extension ListViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return DataService.instance.students.count
+        return StudentDataSource.sharedInstance.studentData.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ListTableViewCell
         
-        cell.configureCell(student: DataService.instance.students.sorted(by: {$0.updatedAt! > $1.updatedAt!})[indexPath.row])
+        cell.configureCell(student: StudentDataSource.sharedInstance.studentData.sorted(by: {$0.updatedAt! > $1.updatedAt!})[indexPath.row])
         
         return cell
     }
@@ -75,10 +77,15 @@ extension ListViewController: UITableViewDataSource {
 extension ListViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
         
-        if let stringURL = DataService.instance.students.sorted(by: {$0.updatedAt! > $1.updatedAt!})[indexPath.row].mediaURL, let url = URL(string:stringURL) {
+        if let stringURL = StudentDataSource.sharedInstance.studentData.sorted(by: {$0.updatedAt! > $1.updatedAt!})[indexPath.row].mediaURL, let url = URL(string:stringURL) {
             
-            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            if Utils.validateUrl(urlString: stringURL as NSString){
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            }else{
+                Utils.showAlert(with: "Error", message: "Not a valid URL", viewController: self, isDefault: true, actions: nil)
+            }
         }
     }
 }

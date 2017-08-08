@@ -11,7 +11,6 @@ import Foundation
 class DataService {
     
     static let instance = DataService()
-    var students = [Student]()
     var isUpdate: Bool = false
     
     private init(){}
@@ -28,8 +27,24 @@ class DataService {
                 completion(false)
                 return
             }
+            
+            do{
+                let result = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as! [String:AnyObject]
+                
+                if let error = result["error"] as? String{
+                    print("Error: \(error)")
+                    completion(false)
+                    return
+                }
+                
+            } catch let err {
+                print(err.localizedDescription)
+                completion(false)
+                return
+            }
+
             print(NSString(data: data!, encoding: String.Encoding.utf8.rawValue)!)
-            DataService.instance.students = Student.parseStudents(data: data!)
+            StudentDataSource.sharedInstance.studentData = Student.parseStudents(data: data!)
             completion(true)
             AuthService.publicUserData(key: AuthService.instance.accountKey!)
         }

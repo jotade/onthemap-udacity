@@ -77,7 +77,7 @@ class MapViewController: UIViewController {
         
         mapView.removeAnnotations(annotations)
         
-        for student in DataService.instance.students{
+        for student in StudentDataSource.sharedInstance.studentData{
             
             let studentPin = createStudentPin(student: student)
             annotations.append(studentPin)
@@ -118,7 +118,7 @@ class MapViewController: UIViewController {
         
         if let uniqueKey = AuthService.instance.currentStudent?.uniqueKey {
             
-            let keys = DataService.instance.students.map{ $0.uniqueKey }
+            let keys = StudentDataSource.sharedInstance.studentData.map{ $0.uniqueKey }
             if keys.contains(where: { $0 == uniqueKey }){
 
                 let overwriteAction = UIAlertAction(title: "Overwrite", style: .default) { action in
@@ -146,7 +146,10 @@ class MapViewController: UIViewController {
         AuthService.logout(){ success,dataString in
             
             print("LOGOUT: \(dataString)")
-            self.parent?.navigationController?.popViewController(animated: true)
+
+            DispatchQueue.main.async {
+                self.dismiss(animated: true, completion: nil)
+            }
         }
     }
     

@@ -74,7 +74,7 @@ struct Student{
                 
                 AuthService.instance.currentStudent = currentStudent
                 
-                if let currentStudentFromServer = DataService.instance.students.filter({ $0.uniqueKey == key }).first {
+                if let currentStudentFromServer = StudentDataSource.sharedInstance.studentData.filter({ $0.uniqueKey == key }).first {
                     
                     AuthService.instance.currentStudent?.objectID = currentStudentFromServer.objectID
                 }

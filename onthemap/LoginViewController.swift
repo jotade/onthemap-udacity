@@ -28,7 +28,7 @@ class LoginViewController: UIViewController {
         
         if Utils.isValidEmail(testStr: email){
             
-            AuthService.login(email: email, password: password) { success in
+            AuthService.login(email: email, password: password) { success, error in
                 
                 if success{
                     
@@ -42,7 +42,7 @@ class LoginViewController: UIViewController {
                     
                     DispatchQueue.main.async {
                         self.activityIndicator.removeFromSuperview()
-                        Utils.showAlert(with: "Error", message: "couldn't log in!", viewController: self, isDefault: true, actions: nil)
+                        Utils.showAlert(with: "Error", message: error!, viewController: self, isDefault: true, actions: nil)
                     }
                 }
             }
