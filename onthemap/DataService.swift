@@ -18,7 +18,7 @@ class DataService {
     
     static func retrieveStudents(completion: @escaping (_ success:Bool)->()){
         
-        let request = NSMutableURLRequest(url: URL(string: "https://parse.udacity.com/parse/classes/StudentLocation")!)
+        let request = NSMutableURLRequest(url: URL(string: "https://parse.udacity.com/parse/classes/StudentLocation?limit=100")!)
         request.addValue("QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr", forHTTPHeaderField: "X-Parse-Application-Id")
         request.addValue("QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY", forHTTPHeaderField: "X-Parse-REST-API-Key")
         let session = URLSession.shared
@@ -57,6 +57,7 @@ class DataService {
         let task = session.dataTask(with: request as URLRequest) { data, response, error in
             if error != nil {
                 print(error!.localizedDescription)
+                completion(false)
                 return
             }
             print(NSString(data: data!, encoding: String.Encoding.utf8.rawValue)!)
@@ -73,10 +74,14 @@ class DataService {
                     if let id = result["objectId"] as? String{
                         AuthService.instance.currentStudent?.objectID = id
                     }
+                    completion(true)
+                }else{
+                    completion(false)
                 }
-                completion(true)
+                
             } catch let err {
                 print(err.localizedDescription)
+                completion(false)
             }
         }
         task.resume()
